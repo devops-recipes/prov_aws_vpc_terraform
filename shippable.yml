@@ -38,7 +38,6 @@ jobs:
           runtime:
             options:
               env:
-                - STATE_RES_NAME: "aws_vpc_tr_info"
                 - vpc_region: "us-east-1"
                 - vpc_name: "demo_vpc_tr"
                 - vpc_cidr_block: "10.10.0.0/16"
