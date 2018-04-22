@@ -51,11 +51,15 @@ jobs:
             - shipctl replace terraform.tfvars
             - terraform plan -var-file=terraform.tfvars
             - terraform apply -var-file=terraform.tfvars
-            - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
-            - shipctl put_resource_state_multi aws_vpc_tr_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
       - OUT: aws_vpc_tr_info
         overwrite: true
       - OUT: aws_vpc_tf_state
+    on_success:
+      script:
+        - shipctl put_resource_state_multi aws_vpc_tr_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
+    always:
+      script:
+        - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
     flags:
       - aws_vpc
       - aws
