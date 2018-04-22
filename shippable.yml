@@ -59,6 +59,7 @@ jobs:
         - shipctl put_resource_state_multi aws_vpc_tf_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
     always:
       script:
+        - pwd
         - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
     flags:
       - aws_vpc
