@@ -47,7 +47,7 @@ jobs:
             - pushd $(shipctl get_resource_state "aws_vpc_tr_repo")
             - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_vpc_tf_creds "accessKey")
             - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_vpc_tf_creds "secretKey")
-            - shipctl copy_resource_file_from_state aws_vpc_tf_state terraform.tfstate .
+            - shipctl copy_file_from_resource_state aws_vpc_tf_state terraform.tfstate .
             - shipctl replace terraform.tfvars
             - terraform plan -var-file=terraform.tfvars
             - terraform apply -var-file=terraform.tfvars
@@ -59,8 +59,8 @@ jobs:
         - shipctl put_resource_state_multi aws_vpc_tf_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
     always:
       script:
-        - pwd
         - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
+        - popd
     flags:
       - aws_vpc
       - aws
