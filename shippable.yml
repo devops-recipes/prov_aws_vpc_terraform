@@ -61,6 +61,7 @@ jobs:
     always:
       script:
         - shipctl copy_file_to_resource_state terraform.tfvars aws_vpc_tf_state
+        - ls -al $(shipctl get_resource_state aws_vpc_tf_state)
         - popd
     flags:
       - aws_vpc
