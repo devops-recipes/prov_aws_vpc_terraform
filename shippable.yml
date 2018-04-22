@@ -8,7 +8,7 @@ resources:
       branch: master
 
 # AWS credentials
-  - name: aws_vpc_tr_creds
+  - name: aws_vpc_tf_creds
     type: integration
     integration: "drship_aws"
 
@@ -17,7 +17,7 @@ resources:
     type: state
 
 # Output of VPC provisioning
-  - name: aws_vpc_tr_info
+  - name: aws_vpc_tf_info
     type: params
     versionTemplate:
       params:
@@ -31,7 +31,7 @@ jobs:
       - IN: aws_vpc_tr_repo
       - IN: aws_vpc_tf_state
         switch: off
-      - IN: aws_vpc_tr_creds
+      - IN: aws_vpc_tf_creds
         switch: off
       - TASK:
           name: prov_vpc
@@ -45,18 +45,18 @@ jobs:
                 - vpc_public_subnet_1_cidr: "10.10.10.0/24"
           script:
             - pushd $(shipctl get_resource_state "aws_vpc_tr_repo")
-            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_vpc_tr_creds "accessKey")
-            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_vpc_tr_creds "secretKey")
+            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_vpc_tf_creds "accessKey")
+            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_vpc_tf_creds "secretKey")
             - shipctl copy_resource_file_from_state aws_vpc_tf_state terraform.tfstate .
             - shipctl replace terraform.tfvars
             - terraform plan -var-file=terraform.tfvars
             - terraform apply -var-file=terraform.tfvars
-      - OUT: aws_vpc_tr_info
+      - OUT: aws_vpc_tf_info
         overwrite: true
       - OUT: aws_vpc_tf_state
     on_success:
       script:
-        - shipctl put_resource_state_multi aws_vpc_tr_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
+        - shipctl put_resource_state_multi aws_vpc_tf_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
     always:
       script:
         - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
