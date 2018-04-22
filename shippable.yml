@@ -1,6 +1,6 @@
 resources:
 # Automation scripts repo
-  - name: aws_vpc_tr_repo
+  - name: aws_vpc_tf_repo
     type: gitRepo
     integration: "drship_github"
     versionTemplate:
