@@ -1,0 +1,63 @@
+resources:
+# Automation scripts repo
+  - name: aws_vpc_tr_repo
+    type: gitRepo
+    integration: "drship_github"
+    versionTemplate:
+      sourceName: "devops-recipes/prov_aws_vpc_terraform"
+      branch: master
+
+# AWS credentials
+  - name: aws_vpc_tr_creds
+    type: integration
+    integration: "drship_aws"
+
+# Terraform State
+  - name: aws_vpc_tf_state
+    type: state
+
+# Output of VPC provisioning
+  - name: aws_vpc_tr_info
+    type: params
+    versionTemplate:
+      params:
+        SEED: "initial_version"
+
+jobs:
+# Provision AWS VPC with Ansible
+  - name: prov_aws_vpc_tr
+    type: runSh
+    steps:
+      - IN: aws_vpc_tr_repo
+      - IN: aws_vpc_tf_state
+        switch: off
+      - IN: aws_vpc_tr_creds
+        switch: off
+      - TASK:
+          name: prov_vpc
+          runtime:
+            options:
+              env:
+                - STATE_RES_NAME: "aws_vpc_tr_info"
+                - vpc_region: "us-east-1"
+                - vpc_name: "demo_vpc_tr"
+                - vpc_cidr_block: "10.10.0.0/16"
+                - vpc_access_from_ip_range: "0.0.0.0/0"
+                - vpc_public_subnet_1_cidr: "10.10.10.0/24"
+          script:
+            - pushd $(shipctl get_resource_state "aws_vpc_tr_repo")
+            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_creds "accessKey")
+            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_resource_field aws_creds "secretKey")
+            - shipctl copy_resource_file_from_state aws_vpc_tf_state terraform.tfstate .
+            - shipctl replace terraform.tfvars
+            - terraform plan
+            - terraform apply
+            - shipctl refresh_file_to_out_path terraform.tfvars aws_vpc_tf_state
+            - shipctl put_resource_state_multi aws_vpc_tr_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)"
+      - OUT: aws_vpc_tr_info
+        overwrite: true
+      - OUT: aws_vpc_tf_state
+    flags:
+      - aws_vpc
+      - aws
+      - terraform

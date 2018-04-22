@@ -1,0 +1,7 @@
+aws_access_key_id="${AWS_ACCESS_KEY_ID}"
+aws_secret_access_key="${AWS_SECRET_ACCESS_KEY}"
+vpc_region="${vpc_region}"
+vpc_name="${vpc_name}"
+vpc_cidr_block="${vpc_cidr_block}"
+vpc_public_subnet_1_cidr="${vpc_public_subnet_1_cidr}"
+vpc_access_from_ip_range="${vpc_access_from_ip_range}}"
