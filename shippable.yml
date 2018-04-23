@@ -24,7 +24,7 @@ resources:
         SEED: "initial_version"
 
 jobs:
-# Provision AWS VPC with Ansible
+# Provision AWS VPC with Terraform
   - name: prov_aws_vpc_tr
     type: runSh
     steps:
