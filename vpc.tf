@@ -31,6 +31,16 @@ resource "aws_subnet" "vpc_public_sn" {
   }
 }
 
+# Private subnet
+resource "aws_subnet" "vpc_memcached_sn" {
+  vpc_id = "${aws_vpc.vpc_name.id}"
+  cidr_block = "${var.vpc_memcached_subnet_cidr}"
+  availability_zone = "${lookup(var.availability_zone, var.vpc_region)}"
+  tags {
+    Name = "vpc_memcached_sn"
+  }
+}
+
 # Routing table for public subnet
 resource "aws_route_table" "vpc_public_sn_rt" {
   vpc_id = "${aws_vpc.vpc_name.id}"
@@ -98,4 +108,8 @@ output "vpc_public_sn_id" {
 
 output "vpc_public_sg_id" {
   value = "${aws_security_group.vpc_public_sg.id}"
+}
+
+output "vpc_memcached_sn_id" {
+  value = "${aws_subnet.vpc_memcached_sn.id}"
 }
