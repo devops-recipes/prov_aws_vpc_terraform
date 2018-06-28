@@ -33,6 +33,10 @@ variable "vpc_public_subnet_1_cidr" {
   description = "Public 0.0 CIDR for externally accesible subnet"
 }
 
+variable "vpc_private_subnet_1_cidr" {
+  description = "CIDR for private subnet"
+}
+
 variable "vpc_access_from_ip_range" {
   description = "Access can be made from the following IPs"
 }
