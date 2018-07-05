@@ -84,6 +84,32 @@ resource "aws_security_group" "vpc_public_sg" {
   }
 }
 
+resource "aws_security_group" "vpc_memcached_sg" {
+  name = "demo_memcached_sg"
+  description = "demo access to Amazon Elasticache - Memcached security group"
+  vpc_id = "${aws_vpc.vpc_name.id}"
+
+  ingress {
+    from_port = 11211
+    to_port = 11211
+    protocol = "tcp"
+    cidr_blocks = [
+      "${var.vpc_public_subnet_1_cidr}"]
+  }
+
+  egress {
+    # allow all traffic to private SN
+    from_port = "0"
+    to_port = "0"
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+  tags {
+    Name = "demo_memcached_sg"
+  }
+}
+
 output "vpc_region" {
   value = "${var.vpc_region}"
 }
@@ -98,4 +124,8 @@ output "vpc_public_sn_id" {
 
 output "vpc_public_sg_id" {
   value = "${aws_security_group.vpc_public_sg.id}"
+}
+
+output "vpc_memcached_sg_id" {
+  value = "${aws_security_group.vpc_memcached_sg.id}"
 }
