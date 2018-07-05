@@ -84,11 +84,12 @@ resource "aws_security_group" "vpc_public_sg" {
   }
 }
 
-resource "aws_security_group" "vpc_memcached_sg" {
-  name = "demo_memcached_sg"
-  description = "demo access to Amazon Elasticache - Memcached security group"
+resource "aws_security_group" "vpc_private_sg" {
+  name = "demo_private_sg"
+  description = "demo security group to access private ports"
   vpc_id = "${aws_vpc.vpc_name.id}"
 
+  # allow memcached port within VPC
   ingress {
     from_port = 11211
     to_port = 11211
@@ -98,7 +99,6 @@ resource "aws_security_group" "vpc_memcached_sg" {
   }
 
   egress {
-    # allow all traffic to private SN
     from_port = "0"
     to_port = "0"
     protocol = "-1"
@@ -106,7 +106,7 @@ resource "aws_security_group" "vpc_memcached_sg" {
       "0.0.0.0/0"]
   }
   tags {
-    Name = "demo_memcached_sg"
+    Name = "demo_private_sg"
   }
 }
 
@@ -126,6 +126,6 @@ output "vpc_public_sg_id" {
   value = "${aws_security_group.vpc_public_sg.id}"
 }
 
-output "vpc_memcached_sg_id" {
-  value = "${aws_security_group.vpc_memcached_sg.id}"
+output "vpc_private_sg_id" {
+  value = "${aws_security_group.vpc_private_sg.id}"
 }
