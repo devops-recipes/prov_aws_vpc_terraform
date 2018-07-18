@@ -31,6 +31,16 @@ resource "aws_subnet" "vpc_public_sn" {
   }
 }
 
+# Private subnet
+resource "aws_subnet" "vpc_private_sn" {
+  vpc_id = "${aws_vpc.vpc_name.id}"
+  cidr_block = "${var.vpc_private_subnet_1_cidr}"
+  availability_zone = "us-east-1b"
+  tags {
+    Name = "vpc_private_sn"
+  }
+}
+
 # Routing table for public subnet
 resource "aws_route_table" "vpc_public_sn_rt" {
   vpc_id = "${aws_vpc.vpc_name.id}"
@@ -129,6 +139,10 @@ output "vpc_id" {
 
 output "vpc_public_sn_id" {
   value = "${aws_subnet.vpc_public_sn.id}"
+}
+
+output "vpc_private_sn_id" {
+  value = "${aws_subnet.vpc_private_sn.id}"
 }
 
 output "vpc_public_sg_id" {
