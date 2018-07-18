@@ -126,6 +126,15 @@ resource "aws_security_group" "vpc_private_sg" {
       "${var.vpc_public_subnet_1_cidr}"]
   }
 
+  # allow mysql port within VPC
+  ingress {
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    cidr_blocks = [
+      "${var.vpc_public_subnet_1_cidr}"]
+  }
+
   egress {
     from_port = "0"
     to_port = "0"
