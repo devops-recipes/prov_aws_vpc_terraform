@@ -43,6 +43,7 @@ jobs:
                 - vpc_cidr_block: "10.10.0.0/16"
                 - vpc_access_from_ip_range: "0.0.0.0/0"
                 - vpc_public_subnet_1_cidr: "10.10.10.0/24"
+                - vpc_private_subnet_1_cidr: "10.10.11.0/24"
           script:
             - pushd $(shipctl get_resource_state "aws_vpc_tf_repo")
             - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_resource_field aws_vpc_tf_creds "accessKey")
@@ -56,7 +57,7 @@ jobs:
       - OUT: aws_vpc_tf_state
     on_success:
       script:
-        - shipctl put_resource_state_multi aws_vpc_tf_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)" "vpc_private_sg_id=$(terraform output vpc_private_sg_id)"
+        - shipctl put_resource_state_multi aws_vpc_tf_info "versionName=$vpc_name" "vpc_id=$(terraform output vpc_id)" "vpc_region=$vpc_region" "vpc_public_sg_id=$(terraform output vpc_public_sg_id)" "vpc_public_sn_id=$(terraform output vpc_public_sn_id)" "vpc_private_sg_id=$(terraform output vpc_private_sg_id)" "vpc_private_sn_id=$(terraform output vpc_private_sn_id)"
     always:
       script:
         - shipctl copy_file_to_resource_state terraform.tfstate aws_vpc_tf_state
