@@ -10,7 +10,7 @@ resources:
 # AWS credentials
   - name: aws_vpc_tf_creds
     type: integration
-    integration: "drship_aws"
+    integration: "dr_aws"
 
 # Terraform State
   - name: aws_vpc_tf_state
