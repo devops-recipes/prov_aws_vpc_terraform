@@ -7,11 +7,6 @@ resources:
       sourceName: "devops-recipes/prov_aws_vpc_terraform"
       branch: master
 
-# AWS credentials
-  - name: aws_vpc_tf_creds
-    type: integration
-    integration: "dr_aws"
-
 # Terraform State
   - name: aws_vpc_tf_state
     type: state
