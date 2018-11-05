@@ -61,3 +61,39 @@ jobs:
       - aws_vpc
       - aws
       - terraform
+
+# De-Provision VPC
+  - name: deprov_aws_vpc_tf
+    type: runSh
+    integrations:
+      - dr_aws
+    steps:
+      - IN: aws_vpc_tf_repo
+      - IN: aws_vpc_tf_state
+      - TASK:
+          name: deprov_vpc
+          runtime:
+            options:
+              env:
+                - vpc_region: "us-east-1"
+                - vpc_name: "demo_vpc_tf"
+                - vpc_cidr_block: "10.10.0.0/16"
+                - vpc_access_from_ip_range: "0.0.0.0/0"
+                - vpc_public_subnet_1_cidr: "10.10.10.0/24"
+                - vpc_private_subnet_1_cidr: "10.10.11.0/24"
+          script:
+            - export AWS_ACCESS_KEY_ID=$(shipctl get_integration_field dr_aws "accessKey")
+            - export AWS_SECRET_ACCESS_KEY=$(shipctl get_integration_field dr_aws "secretKey")
+            - pushd $(shipctl get_resource_state "aws_vpc_tf_repo")
+            - shipctl copy_file_from_resource_state aws_vpc_tf_state terraform.tfstate .
+            - shipctl replace terraform.tfvars
+            - terraform init
+            - terraform destroy -force -auto-approve -var-file=terraform.tfvars
+      - OUT: aws_ecs_tf_state
+    always:
+      script:
+        - shipctl copy_file_to_resource_state terraform.tfstate aws_vpc_tf_state
+    flags:
+      - aws_vpc
+      - aws
+      - terraform
