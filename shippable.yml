@@ -70,6 +70,9 @@ jobs:
     steps:
       - IN: aws_vpc_tf_repo
       - IN: aws_vpc_tf_state
+        switch: off
+      - IN: aws_vpc_tf_info
+        switch: off
       - TASK:
           name: deprov_vpc
           runtime:
@@ -89,7 +92,7 @@ jobs:
             - shipctl replace terraform.tfvars
             - terraform init
             - terraform destroy -force -auto-approve -var-file=terraform.tfvars
-      - OUT: aws_ecs_tf_state
+      - OUT: aws_vpc_tf_state
     always:
       script:
         - shipctl copy_file_to_resource_state terraform.tfstate aws_vpc_tf_state
